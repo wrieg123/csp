@@ -38,28 +38,28 @@ static InputAdapter * create_wsclient_input_adapter( csp::AdapterManager * manag
     return wsclientManager -> getInputAdapter( cspType, pushMode, fromPython<Dictionary>( pyProperties ) );
 }
 
-// static OutputAdapter * create_wsclient_output_adapter( csp::AdapterManager * manager, PyEngine * pyengine, PyObject * args )
-// {
-//     PyObject * pyProperties;
-//     PyObject * pyType;
+static OutputAdapter * create_wsclient_output_adapter( csp::AdapterManager * manager, PyEngine * pyengine, PyObject * args )
+{
+    // PyObject * pyProperties;
+    // PyObject * pyType;
 
-//     auto * wsclientManager = dynamic_cast<WSClientAdapterManager*>( manager );
-//     if( !wsclientManager )
-//         CSP_THROW( TypeError, "Expected WSClientAdapterManager" );
+    auto * wsclientManager = dynamic_cast<WSClientAdapterManager*>( manager );
+    if( !wsclientManager )
+        CSP_THROW( TypeError, "Expected WSClientAdapterManager" );
 
-//     if( !PyArg_ParseTuple( args, "OO!",
-//                            &pyType,
-//                            &PyDict_Type, &pyProperties ) )
-//         CSP_THROW( PythonPassthrough, "" );
+    // if( !PyArg_ParseTuple( args, "OO!",
+    //                        &pyType,
+    //                        &PyDict_Type, &pyProperties ) )
+    //     CSP_THROW( PythonPassthrough, "" );
 
-//     auto & cspType = pyTypeAsCspType( pyType );
+    // auto & cspType = pyTypeAsCspType( pyType );
 
-//     return wsclientManager -> getOutputAdapter( cspType, fromPython<Dictionary>( pyProperties ) );
-// }
+    return wsclientManager -> getOutputAdapter();
+}
 
 REGISTER_ADAPTER_MANAGER( _wsclient_adapter_manager, create_wsclient_adapter_manager );
 REGISTER_INPUT_ADAPTER(   _wsclient_input_adapter,   create_wsclient_input_adapter );
-// REGISTER_OUTPUT_ADAPTER(  _wsclient_output_adapter,  create_wsclient_output_adapter );
+REGISTER_OUTPUT_ADAPTER(  _wsclient_output_adapter,  create_wsclient_output_adapter );
 
 static PyModuleDef _wsclientadapterimpl_module = {
         PyModuleDef_HEAD_INIT,

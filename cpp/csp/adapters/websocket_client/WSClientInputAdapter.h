@@ -5,7 +5,7 @@
 #include <websocketpp/client.hpp>
 #include <csp/engine/Dictionary.h>
 #include <csp/adapters/utils/MessageStructConverter.h>
-#include <csp/engine/PushPullInputAdapter.h>
+#include <csp/engine/PushInputAdapter.h>
 #include <csp/engine/Struct.h>
 
 namespace csp::adapters::wsclient

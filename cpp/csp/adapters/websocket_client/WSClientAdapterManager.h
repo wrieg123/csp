@@ -15,6 +15,25 @@
 
 namespace csp::adapters::wsclient {
 
+struct WebsocketClientStatusTypeTraits
+{
+    enum _enum : unsigned char
+    {
+        ACTIVE = 0,
+        MSG_SEND_ERROR = 2,
+        MSG_RECV_ERROR = 3,
+        GENERIC_ERROR = 4,
+        CONNECTION_FAILED = 5,
+
+        NUM_TYPES
+    };
+
+protected:
+    _enum m_value;
+};
+
+using WSClientStatusType = csp::Enum<WebsocketClientStatusTypeTraits>;
+
 typedef websocketpp::client<websocketpp::config::asio_client> client;
 
 class WSClientAdapterManager final : public csp::AdapterManager
@@ -29,13 +48,11 @@ public:
     const char * name() const override { return "WSClientAdapterManager"; }
 
     void start( DateTime starttime, DateTime endtime ) override;
-    // callback to the input adapter processMessage
-    void onMessage( websocketpp::connection_hdl, message_ptr msg);
 
     void stop() override;
 
     PushInputAdapter * getInputAdapter( CspTypePtr & type, PushMode pushMode, const Dictionary & properties );
-    // OutputAdapter * getOutputAdapter( CspTypePtr & type, const Dictionary & properties );
+    OutputAdapter * getOutputAdapter();
 
     DateTime processNextSimTimeSlice( DateTime time ) override;
 
@@ -44,8 +61,20 @@ private:
     client m_client;
     WSClientInputAdapter* m_inputAdapter;
     websocketpp::connection_hdl m_hdl;
-    // WSClientOutputAdapter* m_outputAdapter;
+    WSClientOutputAdapter* m_outputAdapter;
     std::unique_ptr<std::thread> m_thread;
+    bool m_threadActive;
+    bool m_shouldRun;
+    bool m_active;
+    const Dictionary m_properties;
+
+private:
+    // callback to the input adapter processMessage
+    void onMessage( websocketpp::connection_hdl, message_ptr msg);
+    void onOpen( websocketpp::connection_hdl );
+    void onFail( websocketpp::connection_hdl );
+
+    void innerLoop();
 };
 
 }
