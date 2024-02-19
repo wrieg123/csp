@@ -14,8 +14,7 @@
       "rapidjson",
       "thrift",
       "utf8proc",
-      "websocketpp",
-      "redis-plus-plus"
+      "websocketpp"
     ],
     "overrides": [
       { "name": "arrow", "version": "7.0.0"}
