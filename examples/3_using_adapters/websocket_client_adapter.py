@@ -1,13 +1,14 @@
 from datetime import datetime
 
 import csp
+from csp.adapters.status import Status
 from csp.adapters.utils import RawTextMessageMapper
 from csp.adapters.websocket_client import WSClientAdapterManager
 
 
 @csp.node
-def on_active(s: csp.ts["T"]) -> csp.ts[str]:
-    if csp.ticked(s):
+def on_active(s: csp.ts[Status]) -> csp.ts[str]:  # or csp.ts[bytes]
+    if csp.ticked(s) and s.status_code == 0:
         return "my message"
 
 
@@ -19,7 +20,9 @@ def g():
     csp.print("status", adapter.status())
 
     # waits for the first status message then starts sending messages from the client to the server
-    adapter.send(on_active(adapter.status()))
+
+    # will need to collect multiple sends if you have multiple output edges
+    adapter.send(csp.unroll(csp.collect([on_active(adapter.status()), on_active(adapter.status())])))
 
 
 if __name__ == "__main__":

@@ -94,5 +94,5 @@ _wsclient_output_adapter_def = output_adapter_def(
     "wsclient_output_adapter",
     _wsclientadapterimpl._wsclient_output_adapter,
     WSClientAdapterManager,
-    input=ts[str],
+    input=ts["T"],
 )
