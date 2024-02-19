@@ -17,6 +17,7 @@ def g():
     out = adapter.subscribe(str, RawTextMessageMapper())
     csp.print("ws_event", out)
     csp.print("status", adapter.status())
+
     # waits for the first status message then starts sending messages from the client to the server
     adapter.send(on_active(adapter.status()))
 
