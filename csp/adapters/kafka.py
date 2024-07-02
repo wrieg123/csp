@@ -1,6 +1,7 @@
 import typing
 from datetime import datetime, timedelta
 from enum import IntEnum
+from typing import List
 from uuid import uuid4
 
 import csp
@@ -17,7 +18,13 @@ from csp.adapters.utils import (
 from csp.impl.wiring import input_adapter_def, output_adapter_def, status_adapter_def
 from csp.lib import _kafkaadapterimpl
 
-_ = BytesMessageProtoMapper, DateTimeType, JSONTextMessageMapper, RawBytesMessageMapper, RawTextMessageMapper
+_ = (
+    BytesMessageProtoMapper,
+    DateTimeType,
+    JSONTextMessageMapper,
+    RawBytesMessageMapper,
+    RawTextMessageMapper,
+)
 T = typing.TypeVar("T")
 
 
@@ -92,7 +99,7 @@ class KafkaAdapterManager:
             consumer_properties["auto.offset.reset"] = "earliest"
 
         self._properties = {
-            "start_offset": start_offset.value if isinstance(start_offset, KafkaStartOffset) else start_offset,
+            "start_offset": (start_offset.value if isinstance(start_offset, KafkaStartOffset) else start_offset),
             "max_threads": max_threads,
             "poll_timeout": poll_timeout,
             "rd_kafka_conf_properties": conf_properties,
@@ -152,10 +159,18 @@ class KafkaAdapterManager:
         properties["meta_field_map"] = meta_field_map
         properties["adjust_out_of_order_time"] = adjust_out_of_order_time
 
-        return _kafka_input_adapter_def(self, ts_type, properties, push_mode)
+        edge = _kafka_input_adapter_def(self, ts_type, properties, push_mode)
+        if push_mode == csp.PushMode.BURST:
+            edge.tstype = csp.ts[List[ts_type]]
+        return edge
 
     def publish(
-        self, msg_mapper: MsgMapper, topic: str, key: str, x: ts["T"], field_map: typing.Union[dict, str] = None
+        self,
+        msg_mapper: MsgMapper,
+        topic: str,
+        key: str,
+        x: ts["T"],
+        field_map: typing.Union[dict, str] = None,
     ):
         if isinstance(field_map, str):
             field_map = {"": field_map}

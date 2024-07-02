@@ -93,7 +93,7 @@ void KafkaInputAdapter::processMessage( RdKafka::Message* message, bool live, cs
         pushLive = true;
     }
 
-    if( type() -> type() == CspType::Type::STRUCT )
+    if( dataType() -> type() == CspType::Type::STRUCT )
     {
         auto tick = m_converter -> asStruct( message -> payload(), message -> len() );
 
@@ -114,7 +114,7 @@ void KafkaInputAdapter::processMessage( RdKafka::Message* message, bool live, cs
 
         pushTick( pushLive, msgTime, std::move( tick ), batch );
     }
-    else if( type() -> type() == CspType::Type::STRING )
+    else if( dataType() -> type() == CspType::Type::STRING )
     {
         pushTick( pushLive, msgTime, std::string( ( const char * ) message -> payload(), message -> len() ) );
     }
