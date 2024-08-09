@@ -138,18 +138,21 @@ class TestWebsocket(unittest.TestCase):
             if csp.ticked(status):
                 return MsgStruct(a=1234, b="im a string").to_json()
 
+
         @csp.node
         def my_edge_that_handles_burst(objs: ts[List[MsgStruct]]) -> ts[bool]:
             if csp.ticked(objs):
                 return True
-
+          
         @csp.graph
         def g():
             ws = WebsocketAdapterManager("ws://localhost:8000/")
             status = ws.status()
             ws.send(send_msg_on_open(status))
             recv = ws.subscribe(MsgStruct, JSONTextMessageMapper(), push_mode=csp.PushMode.BURST)
+
             _ = my_edge_that_handles_burst(recv)
+
             csp.add_graph_output("recv", recv)
             csp.stop_engine(recv)
 
