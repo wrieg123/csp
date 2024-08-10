@@ -73,7 +73,7 @@ bool UnknownOnInvalidValue(long) { return false; }
 
 START_PACKED
 template<typename EnumTraits>
-struct Enum : public EnumTraits
+struct CSP_PUBLIC Enum : public EnumTraits
 {
     using EnumV = typename EnumTraits::_enum;
     using Mapping = std::vector<std::string>;
@@ -216,7 +216,7 @@ struct hash<csp::Enum<EnumTraits>> {
 }
 
 #define INIT_CSP_ENUM(ENUM, ...)                                \
-    template<> const ENUM::Mapping & ENUM::mapping() {      \
+    template<> const CSP_PUBLIC ENUM::Mapping & ENUM::mapping() {      \
         static ENUM::Mapping s_mapping( { __VA_ARGS__ } );  \
         return s_mapping;                                   \
     }

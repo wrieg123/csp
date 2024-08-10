@@ -167,7 +167,7 @@ private:
     std::shared_ptr<StructMeta> m_meta;
 };
 
-class CspArrayType : public CspType
+class CSP_PUBLIC CspArrayType : public CspType
 {
 public:
     CspArrayType( CspTypePtr elemType, bool isPyStructFastList = false ) :
